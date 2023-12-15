@@ -13,26 +13,7 @@ using LitJson;
 
 public class BaiDuAI : SingletonAuto<BaiDuAI>
 {
-    protected override void Awake()
-    {
-        base.Awake();
-        //myRobotID = XMLManager.Instance.GetStringParam("我的机器人ID", "S84966");
-        //apiKey = XMLManager.Instance.GetStringParam("语音技术APIKey", "ijOO7KGpogkZYPfh6L5DK8rB");
-        //secretKey = XMLManager.Instance.GetStringParam("语音技术SecretKey", "Dj1rVAcjmGt5EN6xqxGGA8l2fc5fDTuH");
-        //clientId = XMLManager.Instance.GetStringParam("智能对话UNITAPIKey", "bMH0tRWPgEghYch5NqDvQWMW");
-        //clientSecret = XMLManager.Instance.GetStringParam("智能对话UNITSecretKey", "rRA4Djwvjjd3CIz3RrcAEAHe0GgQQ130");
-        //WXQF_APIKey = XMLManager.Instance.GetStringParam("文心千帆APIKey", "x83UuBuid0PoT9uaOhrYvKFk");
-        //WXQF_SecretKey = XMLManager.Instance.GetStringParam("文心千帆SecretKey", "GnuvwkS3wp6oWHpYMjFg7X1RLGsifEV2");
-
-        string[] data = File.ReadAllLines(Application.streamingAssetsPath + "/百度智能语音助手.txt");
-        apiKey = data[0].Split(':')[1];
-        secretKey = data[1].Split(':')[1];
-        clientId = data[2].Split(':')[1];
-        clientSecret = data[3].Split(':')[1];
-        myRobotID = data[4].Split(':')[1];
-        WXQF_APIKey = data[5].Split(':')[1];
-        WXQF_SecretKey = data[6].Split(':')[1];
-    }
+   
 
 
     //开始对话 Index（用户开始录音一次 算一次）
@@ -73,6 +54,37 @@ public class BaiDuAI : SingletonAuto<BaiDuAI>
 
     //百度智能语音助手令牌 AccessToken令牌
     private string accessToken_ = string.Empty;
+
+
+    protected override void Awake()
+    {
+        base.Awake();
+        //myRobotID = XMLManager.Instance.GetStringParam("我的机器人ID", "S84966");
+        //apiKey = XMLManager.Instance.GetStringParam("语音技术APIKey", "ijOO7KGpogkZYPfh6L5DK8rB");
+        //secretKey = XMLManager.Instance.GetStringParam("语音技术SecretKey", "Dj1rVAcjmGt5EN6xqxGGA8l2fc5fDTuH");
+        //clientId = XMLManager.Instance.GetStringParam("智能对话UNITAPIKey", "bMH0tRWPgEghYch5NqDvQWMW");
+        //clientSecret = XMLManager.Instance.GetStringParam("智能对话UNITSecretKey", "rRA4Djwvjjd3CIz3RrcAEAHe0GgQQ130");
+        //WXQF_APIKey = XMLManager.Instance.GetStringParam("文心千帆APIKey", "x83UuBuid0PoT9uaOhrYvKFk");
+        //WXQF_SecretKey = XMLManager.Instance.GetStringParam("文心千帆SecretKey", "GnuvwkS3wp6oWHpYMjFg7X1RLGsifEV2");
+
+        /*string[] data = File.ReadAllLines(Application.streamingAssetsPath + "/百度智能语音助手.txt");
+        apiKey = data[0].Split(':')[1];
+        secretKey = data[1].Split(':')[1];
+        clientId = data[2].Split(':')[1];
+        clientSecret = data[3].Split(':')[1];
+        myRobotID = data[4].Split(':')[1];
+        WXQF_APIKey = data[5].Split(':')[1];
+        WXQF_SecretKey = data[6].Split(':')[1];*/
+        myRobotID = "S84966";
+        apiKey = "ijOO7KGpogkZYPfh6L5DK8rB";
+        secretKey = "Dj1rVAcjmGt5EN6xqxGGA8l2fc5fDTuH";
+        clientId = "bMH0tRWPgEghYch5NqDvQWMW";
+        clientSecret = "rRA4Djwvjjd3CIz3RrcAEAHe0GgQQ130";
+        WXQF_APIKey = "x83UuBuid0PoT9uaOhrYvKFk";
+        WXQF_SecretKey = "GnuvwkS3wp6oWHpYMjFg7X1RLGsifEV2";
+    }
+
+
 
     /// <summary>
     /// 获取 百度智能语音助手AccessToken

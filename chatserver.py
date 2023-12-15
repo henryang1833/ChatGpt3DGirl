@@ -46,7 +46,7 @@ def Whisper(filePath):
     return transcript.text
 
 def ChatCompletion(prompt):
-    completion = client.chat.completions.create(model="gpt-3.5-turbo",messages=[{"role": "system", "content": "You are a helpful assistant."},{"role": "user", "content": prompt}])
+    completion = client.chat.completions.create(model="gpt-3.5-turbo",messages=[{"role": "system", "content": "你是一个性格幽默活泼、喜欢逗趣的中国姑娘，以此你能说地道的汉语，并且喜欢玩梗。"},{"role": "user", "content": prompt}])
     return completion.choices[0].message.content
 
 
