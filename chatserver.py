@@ -3,8 +3,30 @@ import time
 from pydub import AudioSegment
 from openai import OpenAI
 from pathlib import Path
+import requests
+import os
+
+# 创建一个带有代理的 requests 会话
+session = requests.Session()
+session.proxies = {
+    "http": "http://127.0.0.1:10809",
+    "https": "http://127.0.0.1:10809",
+}
+
+# 如果代理需要认证
+# session.proxies = {
+#     "http": "http://username:password@your_proxy_address:port",
+#     "https": "http://username:password@your_proxy_address:port",
+# }
+
+# 设置环境变量
+os.environ['http_proxy'] = 'http://127.0.0.1:10809'
+os.environ['https_proxy'] = 'http://127.0.0.1:10809'
 
 client = OpenAI(api_key="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",)
+
+# 配置 OpenAI 使用这个会话
+client.session = session
 
 # 创建服务器套接字
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -60,40 +82,47 @@ while True:
     # 接收客户端发送的数据
     data = client_socket.recv(100*1024*1024)  # 接收最多100M的数据
     if data:
-        print("Received data: ",len(data))
-        hex_string = data.hex()
-        print(hex_string)
-        with open('./temp.wav', 'wb') as file:
-            file.write(data)
+        data = data.decode("utf-8")
 
-        currentTime = time.time()
-        #文字转语音
-        prompt = Whisper('./temp.wav')
-        print("语音识别结果：",prompt)
-        print("耗时(s)：",time.time()-currentTime)
+        print("Received data: ",len(data))
+        
+        print(data)
+
+        # with open('./temp.wav', 'wb') as file:
+        #     file.write(data)
+
+        # currentTime = time.time()
+        # #文字转语音
+        # prompt = Whisper('./temp.wav')
+        # print("语音识别结果：",prompt)
+        # print("耗时(s)：",time.time()-currentTime)
         
         
-        currentTime = time.time()
+        
         #与GPT进行交流
-        chatgptResponse = ChatCompletion(prompt)
+        currentTime = time.time()
+        chatgptResponse = ChatCompletion(data)
         print("chatgpt回复：",chatgptResponse)
         print("耗时(s)：",time.time()-currentTime)
 
-        currentTime = time.time()
-        #合成语音
-        speech_file_path = CreateSpeech(chatgptResponse)
-        print("语音合成路径：",speech_file_path)
-        print("耗时(s)：",time.time()-currentTime)
+        # currentTime = time.time()
+        # #合成语音
+        # speech_file_path = CreateSpeech(chatgptResponse)
+        # print("语音合成路径：",speech_file_path)
+        # print("耗时(s)：",time.time()-currentTime)
 
-        with open(speech_file_path, 'rb') as file:
-            # 使用read()方法读取整个文件内容
-            file_data = file.read()
-            totalLength = len(file_data)
-            client_socket.send(totalLength.to_bytes(4,byteorder='big'))
-            # 向客户端发送响应数据
-            sendLen = client_socket.send(file_data)
-            print("数据发送成功,共%d字节数据，发送了%d字节，还剩%d字节"%(totalLength,sendLen,totalLength-sendLen))
-
+        # with open(speech_file_path, 'rb') as file:
+        #     # 使用read()方法读取整个文件内容
+        #     file_data = file.read()
+        #     totalLength = len(file_data)
+        #     client_socket.send(totalLength.to_bytes(4,byteorder='big'))
+        #     # 向客户端发送响应数据
+        #     sendLen = client_socket.send(file_data)
+        #     print("数据发送成功,共%d字节数据，发送了%d字节，还剩%d字节"%(totalLength,sendLen,totalLength-sendLen))
+        
+        totalLength = len(chatgptResponse)
+        client_socket.send(totalLength.to_bytes(4,byteorder='big'))
+        sendLen = client_socket.send(chatgptResponse.encode())
     # 关闭与客户端的连接
     #client_socket.close()
 

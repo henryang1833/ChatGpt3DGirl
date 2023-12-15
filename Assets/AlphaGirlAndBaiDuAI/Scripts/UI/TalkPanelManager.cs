@@ -133,7 +133,8 @@ public class TalkPanelManager : MonoBehaviour
         //BaiDuAI.Instance.StartTTS(beginAlphaGirlText);
 
         BaiDuAI.Instance.WenZiToAudio += PlayTalk;
-        BaiDuAI.Instance.YuYinShiBieResult += OnYuYinShiBieResult;
+        //BaiDuAI.Instance.YuYinShiBieResult += OnYuYinShiBieResult;
+        BaiDuAI.Instance.YuYinShiBieResult += OnYuYinShiBieSuccess;
         BaiDuAI.Instance.AIAnswerResult += AIHuiDa;
         //BaiDuAI.Instance.OnRecvData += SaveRecvDataAndTalk;
         BaiDuAI.Instance.OnRecvData += PlayChatGptResponse;
@@ -180,10 +181,10 @@ public class TalkPanelManager : MonoBehaviour
             {
                 Debug.Log("录制时长：" + trueLength);
                 currentTime = Time.time;
-                // BaiDuAI.Instance.SendYuYinToBaiDu(saveAudioClip, trueLength);
+                BaiDuAI.Instance.SendYuYinToBaiDu(saveAudioClip, trueLength);
 
 
-                //额外的代码，yhw添加的程序
+                /*//额外的代码，yhw添加的程序
                 bool isTestVideo = false;
                 if (isTestVideo)
                 {
@@ -195,7 +196,7 @@ public class TalkPanelManager : MonoBehaviour
                     byte[] byteSendArray = toWAV.ConvertToWAVStream(saveAudioClip, trueLength);
                     StartCoroutine(server.Chat(byteSendArray));
                 }
-                //额外的代码
+                //额外的代码*/
             }
             else
             {
@@ -258,7 +259,16 @@ public class TalkPanelManager : MonoBehaviour
         }
     }
 
-    
+
+    /// <summary>
+    /// 语音识别成功后调用
+    /// </summary>
+    /// <param name="resultStr">语音识别结果</param>
+    public void OnYuYinShiBieSuccess(string resultStr)
+    {
+        StartCoroutine(server.TextChat(resultStr));
+    }
+
 
     //用户语音识别结果（识别内容）
     public void OnYuYinShiBieResult(string resultStr)
