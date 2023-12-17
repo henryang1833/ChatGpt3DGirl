@@ -3,17 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
-using CrazyMinnow.SALSA;
 using System.IO;
 using UnityEngine.Networking;
+using ChatGpt;
 
 public class TalkPanelManager : MonoBehaviour
 {
     private CanvasGroup canvasGroup;
     public GameObject TalkPanelUI;
     public Button talk_Btn;
-    private SocketServer server;
+    private ChatAgent chatAgent;
     
     private AudioClipToWAV toWAV;
     //正在录音时候的话筒动画
@@ -66,6 +65,8 @@ public class TalkPanelManager : MonoBehaviour
     [HideInInspector]
     public VoiceModuleManager voiceModuleManager;
     private static TalkPanelManager instance;
+    private Queue<AudioClip> audioClipQueue;
+    
     public static TalkPanelManager Instance
     {
         get
@@ -80,6 +81,7 @@ public class TalkPanelManager : MonoBehaviour
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
+        audioClipQueue= new Queue<AudioClip>();
     }
     void Start()
     {
@@ -122,7 +124,7 @@ public class TalkPanelManager : MonoBehaviour
         //TalkPanelUI.SetActive(false);
         OnEnter();
 
-        server = gameObject.AddComponent<SocketServer>();
+        chatAgent = gameObject.AddComponent<ChatAgent>();
         toWAV = gameObject.AddComponent<AudioClipToWAV>();
     }
 
@@ -132,12 +134,32 @@ public class TalkPanelManager : MonoBehaviour
         //AlphaTalk_Panel.SetAlphaTalkText(beginAlphaGirlText);
         //BaiDuAI.Instance.StartTTS(beginAlphaGirlText);
 
-        BaiDuAI.Instance.WenZiToAudio += PlayTalk;
+        //BaiDuAI.Instance.WenZiToAudio += PlayTalk;
+        BaiDuAI.Instance.WenZiToAudio += OnRecvAudioClip;
         //BaiDuAI.Instance.YuYinShiBieResult += OnYuYinShiBieResult;
         BaiDuAI.Instance.YuYinShiBieResult += OnYuYinShiBieSuccess;
         BaiDuAI.Instance.AIAnswerResult += AIHuiDa;
         //BaiDuAI.Instance.OnRecvData += SaveRecvDataAndTalk;
         BaiDuAI.Instance.OnRecvData += PlayChatGptResponse;
+    }
+
+    public IEnumerator AudioClipQueueWatcher()
+    {
+        while(true)
+        {
+            if (isRecording)
+            {
+                audioClipQueue.Clear();
+                break;
+            }
+            else if (!GameManager.Instance.mAlphaGrilMove.salsa3D.audioSrc.isPlaying&&audioClipQueue.Count>0)
+            {            
+                AudioClip clip =  audioClipQueue.Dequeue();
+                
+                PlayTalk(clip);
+            }
+            yield return null;
+        }
     }
 
     private void PlayTalk(AudioClip clip)
@@ -149,6 +171,11 @@ public class TalkPanelManager : MonoBehaviour
     }
 
 
+    private void OnRecvAudioClip(AudioClip clip)
+    {
+        audioClipQueue.Enqueue(clip);
+    }
+
     /// <summary>
     /// 录音按钮点击事件
     /// </summary>
@@ -158,6 +185,8 @@ public class TalkPanelManager : MonoBehaviour
         if (isRecording)
         {
             Debug.Log("开始录音");
+            chatAgent.EngChat();
+            
             talk_Anim.gameObject.SetActive(true);
             talk_Btn.GetComponent<Image>().color = new Color(255, 255, 255, 0);
             //停止播放alphaGirl
@@ -165,12 +194,13 @@ public class TalkPanelManager : MonoBehaviour
             GameManager.Instance.mAlphaGrilMove.StopTalk();
             BaiDuAI.Instance.OnStartIndex();
             //开始录音
+            
             StartRecording();
         }
         else
         {
             Debug.Log("录音结束");
-
+            chatAgent.BeginChat();
             //录音结束
             talk_Anim.gameObject.SetActive(false);
             talk_Btn.GetComponent<Image>().color = new Color(255, 255, 255, 255);
@@ -182,21 +212,7 @@ public class TalkPanelManager : MonoBehaviour
                 Debug.Log("录制时长：" + trueLength);
                 currentTime = Time.time;
                 BaiDuAI.Instance.SendYuYinToBaiDu(saveAudioClip, trueLength);
-
-
-                /*//额外的代码，yhw添加的程序
-                bool isTestVideo = false;
-                if (isTestVideo)
-                {
-                    string wavPath = toWAV.ConvertToWAVStreamAndSaveAsFile(saveAudioClip, trueLength);   //AudioClip转为WAV文件并保存，返回文件路径
-                    StartCoroutine(server.Chat(wavPath));    //与中转服务器进行交互，取得的回复数据保存到byteRecvArray中 
-                }
-                else
-                {
-                    byte[] byteSendArray = toWAV.ConvertToWAVStream(saveAudioClip, trueLength);
-                    StartCoroutine(server.Chat(byteSendArray));
-                }
-                //额外的代码*/
+                StartCoroutine(AudioClipQueueWatcher());
             }
             else
             {
@@ -260,13 +276,19 @@ public class TalkPanelManager : MonoBehaviour
     }
 
 
+    public void OnRecvSentence(String sentence)
+    {
+        Debug.Log("OnRecvSentence:" + sentence);
+        BaiDuAI.Instance.StartTTS(sentence);
+    }
+
     /// <summary>
     /// 语音识别成功后调用
     /// </summary>
     /// <param name="resultStr">语音识别结果</param>
     public void OnYuYinShiBieSuccess(string resultStr)
     {
-        StartCoroutine(server.TextChat(resultStr));
+        StartCoroutine(chatAgent.TextChat(resultStr,OnRecvSentence));
     }
 
 
@@ -442,6 +464,7 @@ public class TalkPanelManager : MonoBehaviour
             UIDoTweenType.Instance.GameObjectDoScaleHide(toneShiftPanel.gameObject);
         }
     }
+
     public void OnEnter()
     {
         canvasGroup.interactable = true;
@@ -449,18 +472,6 @@ public class TalkPanelManager : MonoBehaviour
         TalkPanelUI.SetActive(true);
         Init();
         Debug.Log("OnEnter");
-    }
-
-
-    public void OnPause()
-    {
-
-    }
-
-
-    public void OnResume()
-    {
-
     }
 
 

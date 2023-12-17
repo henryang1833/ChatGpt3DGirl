@@ -13,9 +13,6 @@ using LitJson;
 
 public class BaiDuAI : SingletonAuto<BaiDuAI>
 {
-   
-
-
     //开始对话 Index（用户开始录音一次 算一次）
     public int StartIndex;
     //结束对话 Index（AI回答消息回调一次 算一次）
@@ -482,7 +479,7 @@ public class BaiDuAI : SingletonAuto<BaiDuAI>
     //3
     #region 百度-合成语音(将文字合成语音)
     //合成语音 音色设置
-    private string currentToneId = "103";
+    private string currentToneId = "5118";
 
     /// <summary>
     /// 设置当前语音音色
