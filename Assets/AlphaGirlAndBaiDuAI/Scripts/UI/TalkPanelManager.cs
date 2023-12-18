@@ -125,6 +125,16 @@ public class TalkPanelManager : MonoBehaviour
         OnEnter();
 
         chatAgent = gameObject.AddComponent<ChatAgent>();
+        string path = System.IO.Path.Combine(Application.persistentDataPath, "server.config");
+        string ip = "192.168.0.25";
+        int port = 8888;
+        if(File.Exists(path))
+            using (System.IO.StreamReader reader = new StreamReader(path))
+            {
+                ip = reader.ReadLine();
+                port = int.Parse(reader.ReadLine());
+            }
+        chatAgent.Initialize(ip, port);
         toWAV = gameObject.AddComponent<AudioClipToWAV>();
     }
 

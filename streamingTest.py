@@ -5,7 +5,7 @@ import os
 os.environ["http_proxy"] = "http://127.0.0.1:10809"
 os.environ["https_proxy"] = "http://127.0.0.1:10809"
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 stream = client.chat.completions.create(
     model="gpt-3.5-turbo",

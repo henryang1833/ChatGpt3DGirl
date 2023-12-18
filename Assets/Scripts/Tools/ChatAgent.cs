@@ -18,6 +18,18 @@ namespace ChatGpt
         private Queue<String> sentenceQueue = new Queue<String>();
         private bool isRecving = false;
         private bool isChating = false;
+        private string ip;
+        private int port;
+
+        
+        public void Initialize(string ip,int port)
+        {
+            this.ip = ip;
+            this.port = port;
+            // 服务器的IP地址和端口
+            IPAddress ipAddress = IPAddress.Parse(ip); // IP
+            remoteEP = new IPEndPoint(ipAddress, port);
+        }
         public void BeginChat()
         {
             isChating = true;
@@ -30,14 +42,7 @@ namespace ChatGpt
             sentenceQueue.Clear();
             onRecvASentenceEvent = null;
         }
-        public void Start()
-        {
-            // 服务器的IP地址和端口
-            IPAddress ipAddress = IPAddress.Parse("172.20.10.7"); // IP
-            int port = 8888; // 端口
-
-            remoteEP = new IPEndPoint(ipAddress, port);
-        }
+        
 
         public IEnumerator Chat(string wavPath)
         {

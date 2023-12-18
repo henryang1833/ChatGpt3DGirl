@@ -8,13 +8,13 @@ import os
 os.environ["http_proxy"] = "http://127.0.0.1:10809"
 os.environ["https_proxy"] = "http://127.0.0.1:10809"
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 # 创建服务器套接字
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # 绑定服务器地址和端口
-server_address = ("127.0.0.1", 8888)  # 使用0.0.0.0表示监听所有网络接口
+server_address = ("192.168.0.25", 8888)  # 使用0.0.0.0表示监听所有网络接口
 server_socket.bind(server_address)
 
 # 开始监听客户端连接
