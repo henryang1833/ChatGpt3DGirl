@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CrazyMinnow.SALSA;
+using DG.Tweening;
 public class AlphaGrilMove : MonoBehaviour
 {
     public Animator animator;
@@ -38,4 +39,24 @@ public class AlphaGrilMove : MonoBehaviour
         salsa3D.Stop();
     }
 
+    public void AlphaGirlNearScence()
+    {
+        Vector3 vector3 = new Vector3(-4.35f, 0.56f, -4.07f);
+        GameObject camera = GameObject.Find("Camera");
+        camera.transform.DOMove(vector3, 0.5f);
+        
+    }
+
+    public void AlphaGirlNormalScence()
+    {
+        Vector3 vector3 = new Vector3(-2.68f, -0.3f, -5.48f);
+        GameObject camera = GameObject.Find("Camera");
+        camera.transform.DOMove(vector3, 0.5f);
+    }
+
+
+    public void AlphaGirlRotate(float dealtRotateY)
+    {
+        transform.localEulerAngles +=  new Vector3(0,dealtRotateY,0);
+    }
 }

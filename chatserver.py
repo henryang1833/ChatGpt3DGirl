@@ -8,7 +8,7 @@ import os
 os.environ["http_proxy"] = "http://127.0.0.1:10809"
 os.environ["https_proxy"] = "http://127.0.0.1:10809"
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 # 创建服务器套接字
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,7 +43,7 @@ while True:
                 messages=[
                     {
                         "role": "system",
-                        "content": "Yor are a good assistant.",
+                        "content": "你是一个好助手，并且你熟知元宇宙的概念，如果提问者的输入词与元宇宙发音相同，你就把这个词当作元宇宙。",
                     },
                     {"role": "user", "content": data},
                 ],
@@ -60,6 +60,7 @@ while True:
                     client_socket.send("END_OF_STREAM".encode())
                     print("发送了:END_OF_STREAM")
         except Exception as e:
+            print(e)
             if e.code == "rate_limit_exceeded":
                 client_socket.send("您的访问频率太快了，请稍后再试！".encode())
                 print("发送了:您的访问频率太快了，请稍后再试！")

@@ -261,7 +261,7 @@ namespace ChatGpt
 
         IEnumerator WordBufferWatcher()
         {
-            char[] cutWords = { '。', '?', '？', '.', '!', '！' };
+            char[] cutWords = { '。', '?', '？', '!', '！', '：',':' };
             while (isChating && (wordBuffer.Length > 0 || isRecving))
             {
                 int start = 0;

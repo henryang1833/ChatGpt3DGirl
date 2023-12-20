@@ -16,7 +16,7 @@ public class rotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        StartCoroutine(TurnArround());
+        //StartCoroutine(TurnArround());
     }
     IEnumerator TurnArround() 
     {
