@@ -23,7 +23,7 @@ public class BaiDuAI : SingletonAuto<BaiDuAI>
     //AI回答成功 要做的事情
     public Action<string> AIAnswerResult = null;
     //文字转语音成功 要做的事情
-    public Action<AudioClip> WenZiToAudio = null;
+    public Action<int,AlphaWord> WenZiToAudio = null;
 
     //接收到数据要做的事
     public Action<byte[]> OnRecvData = null;
@@ -92,9 +92,16 @@ public class BaiDuAI : SingletonAuto<BaiDuAI>
         Debug.Log("百度智能语音语音助手-获取Token开始\n");
         var uri = string.Format("https://aip.baidubce.com/oauth/2.0/token?client_id={0}&client_secret={1}&grant_type=client_credentials", apiKey, secretKey);
         UnityWebRequest unityWebRequest = UnityWebRequest.Get(uri);
+        //unityWebRequest.downloadHandler = new DownloadHandlerBuffer();
+        
         yield return unityWebRequest.SendWebRequest();
 
-        if (unityWebRequest.isDone)
+        if (unityWebRequest.isNetworkError || unityWebRequest.isHttpError)
+        {
+            Debug.LogErrorFormat("百度智能语音语音助手-获取Token失败，消息错误!!!\n内容：{0}", unityWebRequest.error);
+            OnEndIndex();
+        }
+        else
         {
             var downloadHandler = unityWebRequest.downloadHandler.text;
             Match match = Regex.Match(downloadHandler, @"access_token.:.(.*?).,");
@@ -110,11 +117,6 @@ public class BaiDuAI : SingletonAuto<BaiDuAI>
                 Debug.LogErrorFormat("百度智能语音语音助手-获取Token错误!!!\n内容：{0}", downloadHandler);
                 OnEndIndex();
             }
-        }
-        else
-        {
-            Debug.LogErrorFormat("百度智能语音语音助手-获取Token失败，消息错误!!!\n内容：{0}", unityWebRequest.error);
-            OnEndIndex();
         }
         //Debug.Log(accessToken_);
     }
@@ -494,20 +496,20 @@ public class BaiDuAI : SingletonAuto<BaiDuAI>
     /// 发起合成语音请求
     /// </summary>
     /// <param name="_text"></param>
-    public void StartTTS(string _text, bool addDuiHuaIndex = false)
+    public void StartTTS(int order, string _text, bool addDuiHuaIndex = false)
     {
         if (addDuiHuaIndex)
         {
             OnStartIndex();
         }
-        StartCoroutine(_StartTTS(_text));
+        StartCoroutine(_StartTTS(order,_text));
     }
 
     /// <summary>
     /// 发起合成语音请求
     /// </summary>
     /// <returns></returns>
-    IEnumerator _StartTTS(string _text)
+    IEnumerator _StartTTS(int order , string _text)
     {
         if (string.IsNullOrEmpty(accessToken_))
         {
@@ -559,7 +561,7 @@ public class BaiDuAI : SingletonAuto<BaiDuAI>
                 if (type.Contains("audio"))
                 {
                     Debug.LogFormat("合成语音-成功\n内容：{0}", _text);
-                    WenZiToAudio?.Invoke(DownloadHandlerAudioClip.GetContent(www));
+                    WenZiToAudio?.Invoke(order, new AlphaWord(_text, DownloadHandlerAudioClip.GetContent(www)));
                 }
                 else
                 {

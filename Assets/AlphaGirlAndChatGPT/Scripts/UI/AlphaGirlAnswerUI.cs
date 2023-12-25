@@ -26,8 +26,8 @@ public class AlphaGirlAnswerUI : MonoBehaviour
         else
         {
             alphaGirl_Text.text = _content;
-            gameObject.SetActive(true);
-
+            //gameObject.SetActive(true);
+            UIDoTweenType.Instance.GameObjectDoScaleShow(gameObject);
         }
     }
 }

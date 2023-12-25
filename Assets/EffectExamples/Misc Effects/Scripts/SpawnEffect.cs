@@ -185,7 +185,7 @@ public class SpawnEffect : MonoBehaviour
         {
             CameraFlyController.MEnabled = false;
             transform.DOScale(Vector3.one, 1).onComplete = OnEffectCompleteTalk;
-        }
+        } 
 
         HideModel();
     }

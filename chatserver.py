@@ -8,13 +8,13 @@ import os
 os.environ["http_proxy"] = "http://127.0.0.1:10809"
 os.environ["https_proxy"] = "http://127.0.0.1:10809"
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 # 创建服务器套接字
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # 绑定服务器地址和端口
-server_address = ("192.168.0.25", 8888)  # 使用0.0.0.0表示监听所有网络接口
+server_address = ("0.0.0.0", 8888)  # 使用0.0.0.0表示监听所有网络接口
 server_socket.bind(server_address)
 
 # 开始监听客户端连接
@@ -43,7 +43,7 @@ while True:
                 messages=[
                     {
                         "role": "system",
-                        "content": "你是一个好助手，并且你熟知元宇宙的概念，如果提问者的输入词与元宇宙发音相同，你就把这个词当作元宇宙。",
+                        "content": "You are a good assistant.",
                     },
                     {"role": "user", "content": data},
                 ],

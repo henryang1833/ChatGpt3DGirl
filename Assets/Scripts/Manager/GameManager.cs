@@ -50,6 +50,24 @@ public class GameManager : MonoBehaviour
         }
 
         float mouseX = Input.GetAxis("Mouse X");
+
+#if UNITY_EDITOR
+        mouseX = Input.GetAxis("Mouse X");
+#elif UNITY_ANDROID
+        // 在安卓上使用不同的方式来获取水平移动值
+        // 比如使用触摸输入
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            mouseX = touch.deltaPosition.x;
+            rotateSpeed = 0.5f;
+        }
+        else
+        {
+            mouseX = 0;
+        }
+#endif
+
         if (Input.GetMouseButton(0)&&mouseX!=0)
         {
             float dealtRatation = rotateSpeed * mouseX;

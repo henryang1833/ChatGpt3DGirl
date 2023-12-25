@@ -6,7 +6,15 @@ using UnityEngine.UI;
 using System.IO;
 using UnityEngine.Networking;
 using ChatGpt;
-
+public struct AlphaWord {
+    public string msg;
+    public AudioClip clip;
+    public AlphaWord(string msg,AudioClip clip)
+    {
+        this.msg = msg;
+        this.clip = clip;
+    }
+};
 public class TalkPanelManager : MonoBehaviour
 {
     private CanvasGroup canvasGroup;
@@ -42,6 +50,7 @@ public class TalkPanelManager : MonoBehaviour
     public AudioClip saveAudioClip;
 
     public AlphaTalk_Panel AlphaTalk_Panel;
+    public AlphaGirlAnswerUI answerUI;
     public OurTalk_Panel OurTalk_Panel;
 
     public string beginAlphaGirlText = "你好!\n我是AlphaGirl，可以问我一些新闻、成语、日期等问题，我也可以讲笑话，或者跟我随便聊聊吧！";
@@ -66,7 +75,9 @@ public class TalkPanelManager : MonoBehaviour
     public VoiceModuleManager voiceModuleManager;
     private static TalkPanelManager instance;
     private Queue<AudioClip> audioClipQueue;
-    
+    private SortedDictionary<int, AlphaWord> alphaWordsDict;
+    private int sentenceCount;
+    private int talkOrder;
     public static TalkPanelManager Instance
     {
         get
@@ -82,6 +93,9 @@ public class TalkPanelManager : MonoBehaviour
     {
         canvasGroup = GetComponent<CanvasGroup>();
         audioClipQueue= new Queue<AudioClip>();
+        alphaWordsDict = new SortedDictionary<int, AlphaWord>();
+        sentenceCount = 0;
+        talkOrder = 0;
     }
     void Start()
     {
@@ -106,11 +120,11 @@ public class TalkPanelManager : MonoBehaviour
         toggle_VoiceModule.onValueChanged.AddListener(Toggle_VoiceModuleOnclick);
         toggle_ToolBox.onValueChanged.AddListener(Toggle_ToolBoxOnclick);
         toggle_ToolBox.isOn = false;
-        UIDoTweenType.Instance.GameObjectDoScaleHide(toneShiftPanel.gameObject);
-        UIDoTweenType.Instance.GameObjectDoScaleHide(sessionPanel.gameObject);
-        UIDoTweenType.Instance.GameObjectDoScaleHide(voiceModulePanel.gameObject);
-        UIDoTweenType.Instance.GameObjectDoScaleHide(OurTalk_Panel.gameObject);
-        UIDoTweenType.Instance.GameObjectDoScaleHide(AlphaTalk_Panel.gameObject);
+        UIDoTweenType.Instance.GameObjectDoScaleHide(toneShiftPanel.gameObject,0);
+        UIDoTweenType.Instance.GameObjectDoScaleHide(sessionPanel.gameObject,0);
+        UIDoTweenType.Instance.GameObjectDoScaleHide(voiceModulePanel.gameObject,0);
+        UIDoTweenType.Instance.GameObjectDoScaleHide(OurTalk_Panel.gameObject,0);
+        //UIDoTweenType.Instance.GameObjectDoScaleHide(answerUI.gameObject,0);
         //获取麦克风设备，判断是否有麦克风设备
         if (Microphone.devices.Length > 0)
         {
@@ -136,16 +150,18 @@ public class TalkPanelManager : MonoBehaviour
             }
         chatAgent.Initialize(ip, port);
         toWAV = gameObject.AddComponent<AudioClipToWAV>();
+        
     }
 
     public void Init()
     {
         Debug.Log("发送语音");
         //AlphaTalk_Panel.SetAlphaTalkText(beginAlphaGirlText);
+        answerUI.SetAlphaText(beginAlphaGirlText);
         //BaiDuAI.Instance.StartTTS(beginAlphaGirlText);
 
         //BaiDuAI.Instance.WenZiToAudio += PlayTalk;
-        BaiDuAI.Instance.WenZiToAudio += OnRecvAudioClip;
+        BaiDuAI.Instance.WenZiToAudio += OnRecvAlphaWord;
         //BaiDuAI.Instance.YuYinShiBieResult += OnYuYinShiBieResult;
         BaiDuAI.Instance.YuYinShiBieResult += OnYuYinShiBieSuccess;
         BaiDuAI.Instance.AIAnswerResult += AIHuiDa;
@@ -159,31 +175,35 @@ public class TalkPanelManager : MonoBehaviour
         {
             if (isRecording)
             {
-                audioClipQueue.Clear();
                 break;
             }
-            else if (!GameManager.Instance.mAlphaGrilMove.salsa3D.audioSrc.isPlaying&&audioClipQueue.Count>0)
-            {            
-                AudioClip clip =  audioClipQueue.Dequeue();
-                
+            else if (!GameManager.Instance.mAlphaGrilMove.salsa3D.audioSrc.isPlaying&&alphaWordsDict.ContainsKey(talkOrder))
+            {
+                AudioClip clip = alphaWordsDict[talkOrder].clip;
+                answerUI.SetAlphaText(alphaWordsDict[talkOrder].msg);
                 PlayTalk(clip);
+                ++talkOrder;
             }
             yield return null;
         }
+        alphaWordsDict.Clear();
+        sentenceCount = 0;
+        talkOrder = 0;
     }
 
     private void PlayTalk(AudioClip clip)
     {
         Debug.Log("模型开始讲话");
         Debug.Log($"语音回复时长：{Time.time - currentTime}s");
+        
         currentTime = Time.time;
         GameManager.Instance.mAlphaGrilMove.PlayTalk(clip);
     }
 
 
-    private void OnRecvAudioClip(AudioClip clip)
+    private void OnRecvAlphaWord(int order,AlphaWord word)
     {
-        audioClipQueue.Enqueue(clip);
+        alphaWordsDict.Add(order, word);
     }
 
     /// <summary>
@@ -221,6 +241,18 @@ public class TalkPanelManager : MonoBehaviour
             {
                 Debug.Log("录制时长：" + trueLength);
                 currentTime = Time.time;
+
+                string path = System.IO.Path.Combine(Application.persistentDataPath, "server.config");
+                string ip = "192.168.0.25";
+                int port = 8888;
+                if (File.Exists(path))
+                    using (System.IO.StreamReader reader = new StreamReader(path))
+                    {
+                        ip = reader.ReadLine();
+                        port = int.Parse(reader.ReadLine());
+                    }
+                chatAgent.Initialize(ip, port);
+
                 BaiDuAI.Instance.SendYuYinToBaiDu(saveAudioClip, trueLength);
                 StartCoroutine(AudioClipQueueWatcher());
             }
@@ -288,8 +320,11 @@ public class TalkPanelManager : MonoBehaviour
 
     public void OnRecvSentence(String sentence)
     {
+        sentence = sentence.Trim();
+        if (string.IsNullOrWhiteSpace(sentence))
+            return;
         Debug.Log("OnRecvSentence:" + sentence);
-        BaiDuAI.Instance.StartTTS(sentence);
+        BaiDuAI.Instance.StartTTS(sentenceCount++ , sentence);
     }
 
     /// <summary>
@@ -385,7 +420,7 @@ public class TalkPanelManager : MonoBehaviour
             value = beginAlphaGirlText;
         }
         AlphaTalk_Panel.SetAlphaTalkText(value.Replace("\\n", "\n"));
-        BaiDuAI.Instance.StartTTS(value);
+        BaiDuAI.Instance.StartTTS(sentenceCount++,value);
     }
 
 
@@ -494,8 +529,8 @@ public class TalkPanelManager : MonoBehaviour
 
         if (BaiDuAI.Instance != null)
         {
-            BaiDuAI.Instance.WenZiToAudio -= PlayTalk;
-            BaiDuAI.Instance.YuYinShiBieResult -= OnYuYinShiBieResult;
+            BaiDuAI.Instance.WenZiToAudio -= OnRecvAlphaWord;
+            BaiDuAI.Instance.YuYinShiBieResult -= OnYuYinShiBieSuccess;
             BaiDuAI.Instance.AIAnswerResult -= AIHuiDa;
         }
     }
