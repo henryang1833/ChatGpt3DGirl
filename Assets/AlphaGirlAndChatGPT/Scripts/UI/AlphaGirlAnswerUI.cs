@@ -19,15 +19,21 @@ public class AlphaGirlAnswerUI : MonoBehaviour
     }
     public void SetAlphaText(string _content = null)
     {
-        if (_content == null)
+        if (_content == null||_content=="")
         {
-            gameObject.SetActive(false);
+            
+            UIDoTweenType.Instance.GameObjectDoScaleHide(gameObject, 0.25f, () =>
+            {
+                //gameObject.SetActive(false);
+                alphaGirl_Text.text = _content;
+            });
         }
         else
         {
             alphaGirl_Text.text = _content;
+            UIDoTweenType.Instance.GameObjectDoScaleShow(gameObject, 0.25f);
             //gameObject.SetActive(true);
-            UIDoTweenType.Instance.GameObjectDoScaleShow(gameObject);
+
         }
     }
 }

@@ -8,7 +8,7 @@ import os
 os.environ["http_proxy"] = "http://127.0.0.1:10809"
 os.environ["https_proxy"] = "http://127.0.0.1:10809"
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 # 创建服务器套接字
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

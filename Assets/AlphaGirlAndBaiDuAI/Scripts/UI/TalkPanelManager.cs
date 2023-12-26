@@ -53,7 +53,7 @@ public class TalkPanelManager : MonoBehaviour
     public AlphaGirlAnswerUI answerUI;
     public OurTalk_Panel OurTalk_Panel;
 
-    public string beginAlphaGirlText = "你好!\n我是AlphaGirl，可以问我一些新闻、成语、日期等问题，我也可以讲笑话，或者跟我随便聊聊吧！";
+    public string beginAlphaGirlText = "你好! 我是AlphaGirl，可以问我一些新闻、成语、日期等问题，我也可以讲笑话，或者跟我随便聊聊吧！";
     // Start is called before the first frame update
 
     /// <summary>
@@ -180,6 +180,7 @@ public class TalkPanelManager : MonoBehaviour
             else if (!GameManager.Instance.mAlphaGrilMove.salsa3D.audioSrc.isPlaying&&alphaWordsDict.ContainsKey(talkOrder))
             {
                 AudioClip clip = alphaWordsDict[talkOrder].clip;
+                Debug.Log($"alphaWordsDict[talkOrder].msg:{alphaWordsDict[talkOrder].msg}");
                 answerUI.SetAlphaText(alphaWordsDict[talkOrder].msg);
                 PlayTalk(clip);
                 ++talkOrder;
@@ -304,9 +305,7 @@ public class TalkPanelManager : MonoBehaviour
                 
                 PlayTalk(clip);
             }
-        }
-        
-        
+        } 
     }
 
     void SaveRawDataAsFile(byte[] byteData, string filePath) 
@@ -548,9 +547,24 @@ public class TalkPanelManager : MonoBehaviour
 
 
     // Update is called once per frame
+    float waitTime = 0;
     void Update()
     {
         CastMouseRay();
+        waitTime += Time.deltaTime;
+        if (!GameManager.Instance.mAlphaGrilMove.salsa3D.audioSrc.isPlaying)
+        {
+            if (waitTime > 2f)
+            {
+                answerUI.SetAlphaText("");
+                
+                waitTime = 0;
+            }
+        }
+        else 
+        {
+            waitTime = 0;
+        }
     }
 
     public void CastMouseRay()

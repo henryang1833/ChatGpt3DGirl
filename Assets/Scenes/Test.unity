@@ -7320,6 +7320,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9106828494692851778, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9106828494706334974, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -7345,15 +7350,20 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9106828495291411412, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_ChildAlignment
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 9106828495291411413, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1121.31
+      value: 1100
       objectReference: {fileID: 0}
     - target: {fileID: 9106828495291411413, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 704
+      value: 665
       objectReference: {fileID: 0}
     - target: {fileID: 9106828495291411413, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}
@@ -7555,6 +7565,26 @@ PrefabInstance:
       propertyPath: answerUI
       value: 
       objectReference: {fileID: 1556495722}
+    - target: {fileID: 9106828496491077001, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_Padding.m_Left
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 9106828496491077001, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_Spacing
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9106828496491077001, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_ChildAlignment
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9106828496491077001, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_Padding.m_Right
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 9106828496491077005, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -7584,6 +7614,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9106828496491077005, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9106828496491077005, guid: 723391e01ee7c8e42a9b53ef59edfd39,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9106828496547225845, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}

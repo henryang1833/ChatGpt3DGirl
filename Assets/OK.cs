@@ -27,6 +27,7 @@ public class OK : MonoBehaviour
             writer.WriteLine(ip);
             writer.WriteLine(port.ToString());
         }
+        Cancel();
     }
 
     void Cancel()

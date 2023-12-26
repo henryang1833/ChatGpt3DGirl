@@ -41,7 +41,7 @@ public class AlphaGrilMove : MonoBehaviour
 
     public void AlphaGirlNearScence()
     {
-        Vector3 vector3 = new Vector3(-4.35f, 0.56f, -4.07f);
+        Vector3 vector3 = new Vector3(-4.35f, 0.42f, -4.07f);
         GameObject camera = GameObject.Find("Camera");
         camera.transform.DOMove(vector3, 0.5f);
         
