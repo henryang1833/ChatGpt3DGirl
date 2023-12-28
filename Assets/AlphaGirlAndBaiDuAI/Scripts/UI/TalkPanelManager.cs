@@ -18,7 +18,7 @@ public struct AlphaWord {
 public class TalkPanelManager : MonoBehaviour
 {
     private CanvasGroup canvasGroup;
-    public GameObject TalkPanelUI;
+    public GameObject TalkCanvas;
     public Button talk_Btn;
     private ChatAgent chatAgent;
     
@@ -78,6 +78,7 @@ public class TalkPanelManager : MonoBehaviour
     private SortedDictionary<int, AlphaWord> alphaWordsDict;
     private int sentenceCount;
     private int talkOrder;
+    private GameObject configCanvas;
     public static TalkPanelManager Instance
     {
         get
@@ -94,6 +95,7 @@ public class TalkPanelManager : MonoBehaviour
         canvasGroup = GetComponent<CanvasGroup>();
         audioClipQueue= new Queue<AudioClip>();
         alphaWordsDict = new SortedDictionary<int, AlphaWord>();
+        configCanvas = GameObject.Find("ConfigCanvas");
         sentenceCount = 0;
         talkOrder = 0;
     }
@@ -117,6 +119,8 @@ public class TalkPanelManager : MonoBehaviour
         toggle_Session.onValueChanged.AddListener(Toggle_SessionOnClick);
         voiceModulePanel = transform.ZYFindChild("VoiceModuleListPanel");
         toggle_VoiceModule = transform.ZYFindChild("toggle_VoiceModule").GetComponent<Toggle>();
+        
+        TalkCanvas = GameObject.Find("TalkCanvas");
         toggle_VoiceModule.onValueChanged.AddListener(Toggle_VoiceModuleOnclick);
         toggle_ToolBox.onValueChanged.AddListener(Toggle_ToolBoxOnclick);
         toggle_ToolBox.isOn = false;
@@ -124,7 +128,9 @@ public class TalkPanelManager : MonoBehaviour
         UIDoTweenType.Instance.GameObjectDoScaleHide(sessionPanel.gameObject,0);
         UIDoTweenType.Instance.GameObjectDoScaleHide(voiceModulePanel.gameObject,0);
         UIDoTweenType.Instance.GameObjectDoScaleHide(OurTalk_Panel.gameObject,0);
+        configCanvas.SetActive(false);
         //UIDoTweenType.Instance.GameObjectDoScaleHide(answerUI.gameObject,0);
+        
         //获取麦克风设备，判断是否有麦克风设备
         if (Microphone.devices.Length > 0)
         {
@@ -513,7 +519,6 @@ public class TalkPanelManager : MonoBehaviour
     {
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
-        TalkPanelUI.SetActive(true);
         Init();
         Debug.Log("OnEnter");
     }
@@ -523,7 +528,6 @@ public class TalkPanelManager : MonoBehaviour
     {
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
-        TalkPanelUI.SetActive(false);
 
 
         if (BaiDuAI.Instance != null)

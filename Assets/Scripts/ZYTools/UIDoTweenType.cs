@@ -35,7 +35,11 @@ public class UIDoTweenType : SingletonAuto<UIDoTweenType>
         if (text != null)
         {
             text.fontSize = 1;
+#if UNITY_ANDROID
             DOTween.To(() => text.fontSize, x => text.fontSize = x, 50, 0.25f);
+#elif UNITY_STANDALONE
+            DOTween.To(() => text.fontSize, x => text.fontSize = x, 25, 0.25f);
+#endif
         }
 
     }

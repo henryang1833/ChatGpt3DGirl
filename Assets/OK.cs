@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class OK : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private GameObject talkCanvas;
+    private GameObject configCanvas;
+    private void Awake()
     {
-        
+        talkCanvas = GameObject.Find("TalkCanvas");
+        configCanvas = GameObject.Find("ConfigCanvas");
     }
 
     // Update is called once per frame
@@ -16,7 +18,7 @@ public class OK : MonoBehaviour
         
     }
 
-    void SaveConfig() 
+    public void SaveConfig() 
     {
         string ip = ConfigManager.Instance.Ip;
         int port = ConfigManager.Instance.Port;
@@ -30,9 +32,11 @@ public class OK : MonoBehaviour
         Cancel();
     }
 
-    void Cancel()
+    public void Cancel()
     {
-        transform.parent.gameObject.SetActive(false);
-        TalkPanelManager.Instance.TalkPanelUI.GetComponent<CanvasGroup>().interactable = true;
+        configCanvas.SetActive(false);
+        talkCanvas.SetActive(true);
+        Camera camera = GameObject.FindObjectOfType<Camera>();
+        camera.cullingMask = -1;
     }
 }
