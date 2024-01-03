@@ -79,6 +79,14 @@ public class TalkPanelManager : MonoBehaviour
     private int sentenceCount;
     private int talkOrder;
     private GameObject configCanvas;
+    public delegate void OnRecordingStateChange();
+    //开始录音回调函数
+    public event OnRecordingStateChange onStartRecording;
+    public event OnRecordingStateChange onEndRecording;
+
+    public Coroutine myCoroutine = null;
+
+
     public static TalkPanelManager Instance
     {
         get
@@ -196,6 +204,7 @@ public class TalkPanelManager : MonoBehaviour
         alphaWordsDict.Clear();
         sentenceCount = 0;
         talkOrder = 0;
+        myCoroutine = null;
     }
 
     private void PlayTalk(AudioClip clip)
@@ -222,6 +231,7 @@ public class TalkPanelManager : MonoBehaviour
         if (isRecording)
         {
             Debug.Log("开始录音");
+            onStartRecording?.Invoke();
             chatAgent.EngChat();
             
             talk_Anim.gameObject.SetActive(true);
@@ -237,6 +247,7 @@ public class TalkPanelManager : MonoBehaviour
         else
         {
             Debug.Log("录音结束");
+            onEndRecording?.Invoke();
             chatAgent.BeginChat();
             //录音结束
             talk_Anim.gameObject.SetActive(false);

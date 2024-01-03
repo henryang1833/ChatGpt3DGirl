@@ -9,7 +9,7 @@ import aiohttp
 os.environ["http_proxy"] = "http://127.0.0.1:10809"
 os.environ["https_proxy"] = "http://127.0.0.1:10809"
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 async def handle_client(reader, writer):
     client_address = writer.get_extra_info('peername')

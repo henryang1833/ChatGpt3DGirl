@@ -7535,7 +7535,7 @@ PrefabInstance:
     - target: {fileID: 9106828495971595348, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 54.000244
+      value: 54
       objectReference: {fileID: 0}
     - target: {fileID: 9106828495971595348, guid: 723391e01ee7c8e42a9b53ef59edfd39,
         type: 3}
@@ -18536,6 +18536,30 @@ SkinnedMeshRenderer:
     type: 3}
   m_PrefabInstance: {fileID: 1240268504}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2129612445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129612439}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0eb67703e599ded4480382af0646701e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2129612446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2129612439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3c34ba51e7fc504e9732d3a74ae7738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2132402072
 GameObject:
   m_ObjectHideFlags: 0
